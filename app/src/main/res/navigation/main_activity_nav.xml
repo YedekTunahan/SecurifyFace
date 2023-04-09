@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity_nav"
+    app:startDestination="@id/firstPageFragment">
+
+    <fragment
+        android:id="@+id/firstPageFragment"
+        android:name="com.example.ergdeneme.FirstPageFragment"
+        android:label="fragment_first_page"
+        tools:layout="@layout/fragment_first_page" >
+        <action
+            android:id="@+id/toGalery"
+            app:destination="@id/galeryFragment" />
+        <action
+            android:id="@+id/toCamera"
+            app:destination="@id/cameraFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/galeryFragment"
+        android:name="com.example.ergdeneme.GaleryFragment"
+        android:label="fragment_galery"
+        tools:layout="@layout/fragment_galery" />
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.example.ergdeneme.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" />
+</navigation>
