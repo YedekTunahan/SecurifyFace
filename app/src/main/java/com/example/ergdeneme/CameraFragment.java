@@ -32,6 +32,8 @@ import com.otaliastudios.cameraview.CameraView;
 import com.otaliastudios.cameraview.frame.Frame;
 import com.otaliastudios.cameraview.frame.FrameProcessor;
 
+import org.jmrtd.lds.MRZInfo;
+
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -217,6 +219,7 @@ public class CameraFragment extends Fragment {
                                     camera.removeFrameProcessor(frameProcessor);
                                     // JMRTD MRZ OKUMA
 
+                                    ReadMerz(result);
 
                                 }
 
@@ -234,5 +237,32 @@ public class CameraFragment extends Fragment {
 
     }
 
+    public  void ReadMerz(String textMRZ){
+        MRZInfo mrzInfo = new MRZInfo(textMRZ);
 
+        String issuingState = mrzInfo.getIssuingState();
+        String primaryIdentifier =  mrzInfo.getPrimaryIdentifier();
+        String secondaryIdentifier = mrzInfo.getSecondaryIdentifier();
+        String documentNumbe = mrzInfo.getDocumentNumber();
+        String nationality = mrzInfo.getNationality();
+        String dateOfBirth = mrzInfo.getDateOfBirth();
+        String personalNumber = mrzInfo.getPersonalNumber();
+        String getOptionalData1 = mrzInfo.getOptionalData1();
+        String Gender = String.valueOf(mrzInfo.getGender());
+        String getDateOfExpiry = mrzInfo.getDateOfExpiry();
+
+
+
+        Log.e("issuingState ( Ulke )",issuingState);
+        Log.e("primaryIdentifier(soyad",primaryIdentifier);
+        Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
+        Log.e("documentNumbe(Seri no)",documentNumbe);
+        Log.e("nationality(UYRUK)",nationality);
+        Log.e("dateOfBirth",dateOfBirth);
+        Log.e("personalNumber(TC)",personalNumber.replace("<",""));
+        Log.e("getOptionalData1",getOptionalData1);
+        Log.e("Gender -Cinsiyet",Gender);
+        Log.e(" Son kullanma tarihi",getDateOfExpiry);
+        Log.w("test","dedaw");
+    }
 }

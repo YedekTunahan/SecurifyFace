@@ -29,10 +29,7 @@ android {
 }
 
 dependencies {
-// imageCropper
-   /* api "com.theartofdev.edmodo:android-image-cropper:2.8.0"
-    implementation "com.squareup.picasso:picasso:2.5.2"
-*/
+
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
@@ -57,6 +54,9 @@ dependencies {
     //Camera
 
     api 'com.otaliastudios:cameraview:2.7.2'
+
+    //JMRTD
+    implementation 'org.jmrtd:jmrtd:0.5.5'
 
 
 }
