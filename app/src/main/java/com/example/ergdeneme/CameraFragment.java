@@ -219,7 +219,7 @@ public class CameraFragment extends Fragment {
                                     camera.removeFrameProcessor(frameProcessor);
                                     // JMRTD MRZ OKUMA
 
-                                    ReadMerz(result);
+                                    ReadMerz(result);//
 
                                 }
 
