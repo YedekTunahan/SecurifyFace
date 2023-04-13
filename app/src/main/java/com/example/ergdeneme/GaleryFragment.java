@@ -150,7 +150,6 @@ public class GaleryFragment extends Fragment {
                                 Log.e("visionText", String.valueOf(visionText.getText()));
 
 
-                                return null;
                             }
                         })
                         .addOnFailureListener(

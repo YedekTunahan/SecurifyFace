@@ -1,5 +1,6 @@
 package com.example.ergdeneme;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -48,6 +49,11 @@ public class CameraFragment extends Fragment {
     private ProcessOCR processOCR;
     TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
 
+    private Intent intent;
+
+    private  String documentNumber="a";
+    private  String dateOfBirth="d";
+    private  String getDateOfExpiry="fa";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -213,14 +219,35 @@ public class CameraFragment extends Fragment {
                                 String value = visionText.getText().replace(" ","");
                                 String result = value.replace("«","<");
 
-                                if (result.length() == 92) {
-                                    Log.e("visionText", result); // Bütün taramayı veriyor...
+                                Boolean toGO = false;
 
+                                if (result.length() == 92) {
+
+                                    Log.e("visionText", result); // Bütün taramayı veriyor...
                                     Log.e("UZUNLUK", String.valueOf(result.length()));
+
+                                    // if şartı gelcek
                                     camera.removeFrameProcessor(frameProcessor);
                                     // JMRTD MRZ OKUMA
-                                   ReadMerz(result);
+                                    ReadMerz(result);
+
+                                    toGO = true;
+
+                                  if (toGO){
+                                      Log.e("Togo","İF e girildi");
+                                      intent = new Intent(CameraFragment.this.getActivity(),NfcActivity.class);
+
+                                      intent.putExtra("getDateOfExpiry",getDateOfExpiry);
+                                      intent.putExtra("dateOfBirth",dateOfBirth);
+                                      intent.putExtra("documentNumber",documentNumber);
+
+
+                                      startActivity(intent);
+                                  }
+
                                 }
+
+
 
                             }
                         })
@@ -244,26 +271,35 @@ public class CameraFragment extends Fragment {
         String issuingState = mrzInfo.getIssuingState();
         String primaryIdentifier =  mrzInfo.getPrimaryIdentifier();
         String secondaryIdentifier = mrzInfo.getSecondaryIdentifier();
-        String documentNumbe = mrzInfo.getDocumentNumber();
+        String documentNumber2 = mrzInfo.getDocumentNumber();
         String nationality = mrzInfo.getNationality();
-        String dateOfBirth = mrzInfo.getDateOfBirth();
+        String dateOfBirth2 = mrzInfo.getDateOfBirth();
         String personalNumber = mrzInfo.getPersonalNumber();
         String getOptionalData1 = mrzInfo.getOptionalData1();
         String Gender = String.valueOf(mrzInfo.getGender());
-        String getDateOfExpiry = mrzInfo.getDateOfExpiry();
+        String getDateOfExpiry2 = mrzInfo.getDateOfExpiry();
 
-
+        documentNumber= mrzInfo.getDocumentNumber();
+        dateOfBirth = mrzInfo.getDateOfBirth();
+        getDateOfExpiry = mrzInfo.getDateOfExpiry();
 
         Log.e("issuingState ( Ulke )",issuingState);
         Log.e("primaryIdentifier(soyad",primaryIdentifier);
         Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
-        Log.e("documentNumbe(Seri no)",documentNumbe);
+        Log.e("documentNumbe(Seri no)",documentNumber2);
         Log.e("nationality(UYRUK)",nationality);
-        Log.e("dateOfBirth",dateOfBirth);
+        Log.e("dateOfBirth",dateOfBirth2);
         Log.e("personalNumber(TC)",personalNumber.replace("<",""));
         Log.e("getOptionalData1",getOptionalData1);
         Log.e("Gender -Cinsiyet",Gender);
-        Log.e(" Son kullanma tarihi",getDateOfExpiry);
+        Log.e(" Son kullanma tarihi",getDateOfExpiry2);
         Log.w("test","dedaw");
+
+
+    }
+
+    public void toGoNFCScreen(){
+        intent = new Intent(CameraFragment.this.getActivity(),NfcActivity.class);
+        startActivity(intent);
     }
 }
