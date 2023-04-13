@@ -170,7 +170,8 @@ public class CameraFragment extends Fragment {
         @Override
         protected Object doInBackground(Object[] objects) {
             if (bitmap != null) {
-                // ML KİT
+
+                // ML KİT - MRZ READ
                  processImage(bitmap);
             }
             return null;
@@ -179,6 +180,8 @@ public class CameraFragment extends Fragment {
         @Override
         protected void onPostExecute(Object o) {  // yürütme sonrası ()
             processing.set(false);  // işleme
+
+            // Sayfa geçiş işlemi
         }
 
         public void setBitmap(Bitmap bitmap) {
@@ -188,7 +191,7 @@ public class CameraFragment extends Fragment {
 
 
     //ML KİT İmage işleme
-    private void processImage(Bitmap bitmap) {
+    private Void processImage(Bitmap bitmap) {
 
         InputImage image = InputImage.fromBitmap(bitmap, 0);
         Task<Text> result =
@@ -207,10 +210,8 @@ public class CameraFragment extends Fragment {
                                     Log.e("symbolFrame", String.valueOf(blockFrame));
                                     Log.d("-","---------");*/
                                 }
-
                                 String value = visionText.getText().replace(" ","");
                                 String result = value.replace("«","<");
-
 
                                 if (result.length() == 92) {
                                     Log.e("visionText", result); // Bütün taramayı veriyor...
@@ -218,9 +219,7 @@ public class CameraFragment extends Fragment {
                                     Log.e("UZUNLUK", String.valueOf(result.length()));
                                     camera.removeFrameProcessor(frameProcessor);
                                     // JMRTD MRZ OKUMA
-
-                                    ReadMerz(result);//
-
+                                   ReadMerz(result);
                                 }
 
                             }
@@ -235,8 +234,10 @@ public class CameraFragment extends Fragment {
                                 });
 
 
+        return null;
     }
 
+    //MRZ INFO
     public  void ReadMerz(String textMRZ){
         MRZInfo mrzInfo = new MRZInfo(textMRZ);
 

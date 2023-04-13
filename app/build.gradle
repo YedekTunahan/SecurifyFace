@@ -34,29 +34,27 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-    //İmagePicker için
-    implementation 'com.github.dhaval2404:imagepicker:2.1'
-
-
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+
+    //İmagePicker için
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
 
     //ML KİT
     implementation 'com.google.android.gms:play-services-mlkit-text-recognition:18.0.2'
 
     //Navigation
-
     implementation "androidx.navigation:navigation-fragment:2.5.3"
     implementation  "androidx.navigation:navigation-ui:2.5.3"
 
     //Camera
-
     api 'com.otaliastudios:cameraview:2.7.2'
 
-    //JMRTD
+    //JMRTD , card service için , izin için
     implementation 'org.jmrtd:jmrtd:0.5.5'
-
+    implementation 'net.sf.scuba:scuba-sc-android:0.0.9'
+    implementation 'com.madgag.spongycastle:prov:1.54.0.0'
 
 }
