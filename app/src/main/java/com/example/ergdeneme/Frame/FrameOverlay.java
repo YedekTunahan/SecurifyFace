@@ -68,7 +68,7 @@ public class FrameOverlay extends LinearLayout {
     protected void createWindowFrame() {
         int viewHeight = getHeight(); // Çember yüksekliği
 
-        windowFrame = Bitmap.createBitmap(getWidth(), viewHeight, Bitmap.Config.ARGB_8888);
+        windowFrame = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas osCanvas = new Canvas(windowFrame);
 
         RectF outerRectangle = new RectF(0, 0, getWidth(), viewHeight); // Siyah arka plan için   -- Normal top = 50 olunca aşağıdan başlıyor...
@@ -93,13 +93,13 @@ public class FrameOverlay extends LinearLayout {
         int top = center - (frameHeight / 2);
         int bottom = center + (frameHeight / 2);
 
-        RectF innerRectangle = new RectF(left, top, right, bottom);
+        RectF innerRectangle = new RectF(left, (int) (top*1.2f), right, (int) (bottom));
         osCanvas.drawRect(innerRectangle, paint); // Belirilen ölçüdeki alanın içini boşaltıyoruz.
 
         // Beyaz Çerçeve Çizimi
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStrokeWidth(5);
-        paint.setColor(Color.YELLOW);
+        paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
         osCanvas.drawRect(innerRectangle, paint);
 
@@ -126,12 +126,12 @@ public class FrameOverlay extends LinearLayout {
         int top2 = center  - (frameHeight / 2);
         int bottom2 = center + (frameHeight / 2);
 
-        RectF innerRectangle2 = new RectF(left2, (int) (top2*2f), right2, bottom2);
+        RectF innerRectangle2 = new RectF(left2, (int) (top2*1.8f), right2, bottom2);
 
 
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setStrokeWidth(10);
-        paint.setColor(Color.RED);
+        paint.setStrokeWidth(5);
+        paint.setColor(Color.GREEN);
         paint.setStyle(Paint.Style.STROKE);
 
         osCanvas.drawRect(innerRectangle2, paint);

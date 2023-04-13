@@ -1,5 +1,6 @@
 package com.example.ergdeneme;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,10 @@ public class FirstPageFragment extends Fragment {
         Camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.toCamera);
+
+                Intent intent = new Intent(FirstPageFragment.this.getActivity(),CameraActivity.class);
+                startActivity(intent);
+               // Navigation.findNavController(v).navigate(R.id.toCamera);
             }
         });
 

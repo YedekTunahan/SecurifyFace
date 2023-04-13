@@ -1,5 +1,6 @@
 package com.example.ergdeneme;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,12 +12,9 @@ import android.graphics.YuvImage;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ergdeneme.Frame.FrameOverlay;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -38,7 +36,8 @@ import org.jmrtd.lds.MRZInfo;
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class CameraFragment extends Fragment {
+public class CameraActivity extends AppCompatActivity {
+
     CameraView camera;
     FrameOverlay viewFinder;
 
@@ -54,24 +53,27 @@ public class CameraFragment extends Fragment {
     private  String documentNumber="a";
     private  String dateOfBirth="d";
     private  String getDateOfExpiry="fa";
+
+    @SuppressLint("MissingInflatedId")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View design = inflater.inflate(R.layout.fragment_camera, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        camera = design.findViewById(R.id.camera);
+        setContentView(R.layout.activity_camera);
 
+        camera = findViewById(R.id.camera2);
         camera.setLifecycleOwner(this); // Yaşam Döngüsü Sahibini Ayarla
+
+
+
         camera.addCameraListener(new CameraListener() {
             @Override
             public void onCameraOpened(@NonNull CameraOptions options) {
-
-                viewFinder = new FrameOverlay(getActivity());
+                viewFinder = new FrameOverlay(CameraActivity.this);
                 camera.addView(viewFinder);
-                camera.addFrameProcessor(frameProcessor); // çerçeve işlemcisi = frame processor
+                camera.addFrameProcessor(frameProcessor); // çerçeve işlemcisi = frame processor Bununla birlikte Sürekli okuma gerçekleştiriliyor...
             }
         });
-        return design;
     }
 
     //Kamera ya eklediğimiz Frame
@@ -100,7 +102,7 @@ public class CameraFragment extends Fragment {
                     processOCR = new ProcessOCR();
                     processOCR.setBitmap(scannable); // New Value döndürüyor.
 
-                    getActivity().runOnUiThread(new Runnable() {
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             processOCR.execute();  // execute ile thread olayını çalıştırıyoruz.
@@ -138,7 +140,7 @@ public class CameraFragment extends Fragment {
         return bitmap;
     }
 
-    
+
     private Bitmap getViewFinderArea(Bitmap bitmap) {  // bulucu alanını görüntüle()
         int sizeInPixel = getResources().getDimensionPixelSize(R.dimen.frame_margin);
         int center = bitmap.getHeight() / 2;
@@ -174,7 +176,7 @@ public class CameraFragment extends Fragment {
             if (bitmap != null) {
 
                 // ML KİT - MRZ READ
-                 processImage(bitmap);
+                processImage(bitmap);
             }
             return null;
         }
@@ -229,9 +231,9 @@ public class CameraFragment extends Fragment {
 
                                     toGO = true;
 
-                                 /* if (toGO){
+                                  if (toGO){
                                       Log.e("Togo","İF e girildi");
-                                      intent = new Intent(CameraFragment.this.getActivity(),NfcActivity.class);
+                                      intent = new Intent(CameraActivity.this,NfcActivity.class);
 
                                       intent.putExtra("getDateOfExpiry",getDateOfExpiry);
                                       intent.putExtra("dateOfBirth",dateOfBirth);
@@ -239,7 +241,7 @@ public class CameraFragment extends Fragment {
 
 
                                       startActivity(intent);
-                                  }*/
+                                  }
 
                                 }
                             }
@@ -291,8 +293,5 @@ public class CameraFragment extends Fragment {
 
     }
 
-    public void toGoNFCScreen(){
-        intent = new Intent(CameraFragment.this.getActivity(),NfcActivity.class);
-        startActivity(intent);
-    }
+
 }
