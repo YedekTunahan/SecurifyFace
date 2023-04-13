@@ -64,14 +64,17 @@ public class NfcActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nfc);
-        documentNumber= "AU47500"; //getIntent().getStringExtra("documentNumber");
-        dateOfBirth= "03.01.1997";//getIntent().getStringExtra("dateOfBirth");
-        getDateOfExpiry = "27.01.2033";//getIntent().getStringExtra("getDateOfExpiry");
+        documentNumber= getIntent().getStringExtra("documentNumber"); //"AU47500"
+        dateOfBirth= getIntent().getStringExtra("dateOfBirth"); //"03.01.1997";
+        getDateOfExpiry = getIntent().getStringExtra("getDateOfExpiry"); //"27.01.2033";
 
        // enableOrDisable();
         textViewNfcRead = findViewById(R.id.textNFC);
         textViewDateOfBirth = findViewById(R.id.textDateOfBirth);
         textViewDocumentNo = findViewById(R.id.textdocumentNumber);
+        textViewMrz =findViewById(R.id.textMRZ);
+        textViewName = findViewById(R.id.textName);
+
     }
     protected void onResume() {
         super.onResume();
@@ -122,7 +125,7 @@ public class NfcActivity extends AppCompatActivity {
                 } else {
                     Snackbar.make(passportNumberView, R.string.error_input, Snackbar.LENGTH_SHORT).show();
                 }*/
-                BACKeySpec bacKey = new BACKey("A40U47500","970103","330127");
+                BACKeySpec bacKey = new BACKey(documentNumber,dateOfBirth,getDateOfExpiry);
                 Log.e("Backey", String.valueOf(bacKey));
                 new ReadTask(nfc, bacKey).execute();
                 /*mainLayout.setVisibility(View.GONE);
@@ -319,10 +322,11 @@ public class NfcActivity extends AppCompatActivity {
 
                 imageViewPhoto.setImageBitmap(bitmap);
                 textViewNfcRead.setText(dg11File.getPersonalNumber());
-
                 textViewDateOfBirth.setText(dateOfBirth);
-
                 textViewDocumentNo.setText(documentNumber);
+                textViewMrz.setText(String.valueOf(dg1File).replace("DG1File",""));
+                //textViewName.setText();
+
 
 
 

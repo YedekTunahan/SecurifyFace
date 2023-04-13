@@ -50,9 +50,9 @@ public class CameraActivity extends AppCompatActivity {
 
     private Intent intent;
 
-    private  String documentNumber="a";
-    private  String dateOfBirth="d";
-    private  String getDateOfExpiry="fa";
+    private  String documentNumber="";
+    private  String dateOfBirth="";
+    private  String getDateOfExpiry="";
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -227,7 +227,7 @@ public class CameraActivity extends AppCompatActivity {
                                     // if şartı gelcek
                                     camera.removeFrameProcessor(frameProcessor);
                                     // JMRTD MRZ OKUMA
-                                    ReadMerz(result);
+                                    MRZInfo mrzInfom = ReadMerz(result);
 
                                     toGO = true;
 
@@ -235,9 +235,9 @@ public class CameraActivity extends AppCompatActivity {
                                       Log.e("Togo","İF e girildi");
                                       intent = new Intent(CameraActivity.this,NfcActivity.class);
 
-                                      intent.putExtra("getDateOfExpiry",getDateOfExpiry);
-                                      intent.putExtra("dateOfBirth",dateOfBirth);
-                                      intent.putExtra("documentNumber",documentNumber);
+                                      intent.putExtra("getDateOfExpiry",mrzInfom.getDateOfExpiry());
+                                      intent.putExtra("dateOfBirth",mrzInfom.getDateOfBirth());
+                                      intent.putExtra("documentNumber",mrzInfom.getDocumentNumber());
 
 
                                       startActivity(intent);
@@ -260,35 +260,24 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     //MRZ INFO
-    public  void ReadMerz(String textMRZ){
-        MRZInfo mrzInfo = new MRZInfo(textMRZ);
+    public  MRZInfo ReadMerz(String textMRZ){
+        MRZInfo mrzInfoz = new MRZInfo(textMRZ);
+        return mrzInfoz;
+       // documentNumber= mrzInfo.getDocumentNumber();
+       // dateOfBirth = mrzInfo.getDateOfBirth();
+       // getDateOfExpiry = mrzInfo.getDateOfExpiry();
 
-        String issuingState = mrzInfo.getIssuingState();
-        String primaryIdentifier =  mrzInfo.getPrimaryIdentifier();
-        String secondaryIdentifier = mrzInfo.getSecondaryIdentifier();
-        String documentNumber2 = mrzInfo.getDocumentNumber();
-        String nationality = mrzInfo.getNationality();
-        String dateOfBirth2 = mrzInfo.getDateOfBirth();
-        String personalNumber = mrzInfo.getPersonalNumber();
-        String getOptionalData1 = mrzInfo.getOptionalData1();
-        String Gender = String.valueOf(mrzInfo.getGender());
-        String getDateOfExpiry2 = mrzInfo.getDateOfExpiry();
 
-        documentNumber= mrzInfo.getDocumentNumber();
-        dateOfBirth = mrzInfo.getDateOfBirth();
-        getDateOfExpiry = mrzInfo.getDateOfExpiry();
-
-        Log.e("issuingState ( Ulke )",issuingState);
-        Log.e("primaryIdentifier(soyad",primaryIdentifier);
-        Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
-        Log.e("documentNumbe(Seri no)",documentNumber2);
-        Log.e("nationality(UYRUK)",nationality);
-        Log.e("dateOfBirth",dateOfBirth2);
-        Log.e("personalNumber(TC)",personalNumber.replace("<",""));
-        Log.e("getOptionalData1",getOptionalData1);
-        Log.e("Gender -Cinsiyet",Gender);
-        Log.e(" Son kullanma tarihi",getDateOfExpiry2);
-        Log.w("test","dedaw");
+       // Log.e("issuingState ( Ulke )",issuingState);
+        //Log.e("primaryIdentifier(soyad",primaryIdentifier);
+        //Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
+       // Log.e("documentNumbe(Seri no)",documentNumber2);
+//        Log.e("dateOfBirth",dateOfBirth2);
+       // Log.e("personalNumber(TC)",personalNumber.replace("<",""));
+        //Log.e("getOptionalData1",getOptionalData1);
+       // Log.e("Gender -Cinsiyet",Gender);
+      //  Log.e(" Son kullanma tarihi",getDateOfExpiry2);
+        //Log.w("test","dedaw");
 
 
     }
