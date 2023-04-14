@@ -13,18 +13,10 @@
         <action
             android:id="@+id/toGalery"
             app:destination="@id/galeryFragment" />
-        <action
-            android:id="@+id/toCamera"
-            app:destination="@id/cameraFragment" />
     </fragment>
     <fragment
         android:id="@+id/galeryFragment"
         android:name="com.example.ergdeneme.GaleryFragment"
         android:label="fragment_galery"
         tools:layout="@layout/fragment_galery" />
-    <fragment
-        android:id="@+id/cameraFragment"
-        android:name="com.example.ergdeneme.CameraFragment"
-        android:label="fragment_camera"
-        tools:layout="@layout/fragment_camera" />
 </navigation>

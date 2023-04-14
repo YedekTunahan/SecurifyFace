@@ -7,7 +7,7 @@
     tools:context=".CameraActivity">
 
     <com.otaliastudios.cameraview.CameraView
-        android:id="@+id/camera2"
+        android:id="@+id/camera"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"

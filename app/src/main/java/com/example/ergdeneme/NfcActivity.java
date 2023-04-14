@@ -53,6 +53,7 @@ public class NfcActivity extends AppCompatActivity {
     String dateOfBirth;
     String getDateOfExpiry;
     ImageView imageViewPhoto;
+
     TextView textViewNfcRead,textViewnameTitle,textViewSurnameTitle,textViewName,textViewSurname,
             textViewDateOfBirthTitle,textViewDateOfBirth,textViewDocumentNoTitle,textViewDocumentNo,textViewMrzTitle,textViewMrz;
 
@@ -64,16 +65,20 @@ public class NfcActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nfc);
-        documentNumber= getIntent().getStringExtra("documentNumber"); //"AU47500"
-        dateOfBirth= getIntent().getStringExtra("dateOfBirth"); //"03.01.1997";
-        getDateOfExpiry = getIntent().getStringExtra("getDateOfExpiry"); //"27.01.2033";
 
-       // enableOrDisable();
-        textViewNfcRead = findViewById(R.id.textNFC);
+        documentNumber=  getIntent().getStringExtra("documentNumber"); //"A4OU47500"
+        dateOfBirth=  getIntent().getStringExtra("dateOfBirth"); //"970103";
+        getDateOfExpiry = getIntent().getStringExtra("getDateOfExpiry"); //"330127";
+
+
+
+       enableOrDisable();
+        /*textViewNfcRead = findViewById(R.id.textNFC);
         textViewDateOfBirth = findViewById(R.id.textDateOfBirth);
         textViewDocumentNo = findViewById(R.id.textdocumentNumber);
         textViewMrz =findViewById(R.id.textMRZ);
         textViewName = findViewById(R.id.textName);
+        textViewSurname = findViewById(R.id.textSurname);*/
 
     }
     protected void onResume() {
@@ -114,77 +119,16 @@ public class NfcActivity extends AppCompatActivity {
             Log.e("TAG", String.valueOf(tag));
             if (Arrays.asList(tag.getTechList()).contains("android.nfc.tech.IsoDep")) {
 
-                /*SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                String passportNumber = preferences.getString(KEY_PASSPORT_NUMBER, null);
-                String expirationDate = convertDate(preferences.getString(KEY_EXPIRATION_DATE, null));
-                String birthDate = convertDate(preferences.getString(KEY_BIRTH_DATE, null));*/
+                BACKeySpec bacKey = new BACKey("A40U47500","970103","330127");
 
-               /* if (passportNumber != null && !passportNumber.isEmpty()
-                        && expirationDate != null && !expirationDate.isEmpty()
-                        && birthDate != null && !birthDate.isEmpty()) {
-                } else {
-                    Snackbar.make(passportNumberView, R.string.error_input, Snackbar.LENGTH_SHORT).show();
-                }*/
-                BACKeySpec bacKey = new BACKey(documentNumber,dateOfBirth,getDateOfExpiry);
                 Log.e("Backey", String.valueOf(bacKey));
                 new ReadTask(nfc, bacKey).execute();
-                /*mainLayout.setVisibility(View.GONE);
-                loadingLayout.setVisibility(View.VISIBLE);*/
+
             }
         }
     }
 
-    /* private static String exceptionStack(Throwable exception) {
-         StringBuilder s = new StringBuilder();
-         String exceptionMsg = exception.getMessage();
-         if (exceptionMsg != null) {
-             s.append(exceptionMsg);
-             s.append(" - ");
-         }
-         s.append(exception.getClass().getSimpleName());
-         StackTraceElement[] stack = exception.getStackTrace();
 
-         if (stack.length > 0) {
-             int count = 3;
-             boolean first = true;
-             boolean skip = false;
-             String file = "";
-             s.append(" (");
-             for (StackTraceElement element : stack) {
-                 if (count > 0 && element.getClassName().startsWith("com.tananaev")) {
-                     if (!first) {
-                         s.append(" < ");
-                     } else {
-                         first = false;
-                     }
-
-                     if (skip) {
-                         s.append("... < ");
-                         skip = false;
-                     }
-
-                     if (file.equals(element.getFileName())) {
-                         s.append("*");
-                     } else {
-                         file = element.getFileName();
-                         s.append(file.substring(0, file.length() - 5)); // remove ".java"
-                         count -= 1;
-                     }
-                     s.append(":").append(element.getLineNumber());
-                 } else {
-                     skip = true;
-                 }
-             }
-             if (skip) {
-                 if (!first) {
-                     s.append(" < ");
-                 }
-                 s.append("...");
-             }
-             s.append(")");
-         }
-         return s.toString();
-     }*/
     ///NFC ile okuma bilgilerin servisten alınması
     private class ReadTask extends AsyncTask<Void, Void, Exception> {
 
@@ -267,6 +211,8 @@ public class NfcActivity extends AppCompatActivity {
                 CardFileInputStream dg11In = service.getInputStream(PassportService.EF_DG11);
                 lds.add(PassportService.EF_DG11, dg11In, dg11In.getLength());
                 dg11File = lds.getDG11File();
+
+
                 ///////////// DG2FİLE
                 CardFileInputStream dg2In = service.getInputStream(PassportService.EF_DG2);
                 lds.add(PassportService.EF_DG2, dg2In, dg2In.getLength());
@@ -321,21 +267,24 @@ public class NfcActivity extends AppCompatActivity {
                 /// IMAGE  documentNumber,dateOfBirth,getDateOfExpiry
 
                 imageViewPhoto.setImageBitmap(bitmap);
+
                 textViewNfcRead.setText(dg11File.getPersonalNumber());
                 textViewDateOfBirth.setText(dateOfBirth);
                 textViewDocumentNo.setText(documentNumber);
-                textViewMrz.setText(String.valueOf(dg1File).replace("DG1File",""));
+                String textMrz = String.valueOf(dg1File).replace("DG1File","");
+                textViewMrz.setText(textMrz);
+                enable();
+               // textViewName.setText("Tunahan");
+                /*MRZInfo name = TakeName(textMrz);
+                textViewName.setText(name.getPrimaryIdentifier());
+                textViewSurname.setText(name.getSecondaryIdentifier());*/
+
                 //textViewName.setText();
 
-
-
-
             } else {
-                //Snackbar.make(passportNumberView, exceptionStack(result), Snackbar.LENGTH_LONG).show();
+
             }
         }
-
-
 
     }
     public Bitmap  FaceInfoChangem(DG2File dg2File,Bitmap bitmapm){
@@ -409,4 +358,10 @@ public class NfcActivity extends AppCompatActivity {
         textViewMrzTitle.setVisibility(View.VISIBLE);
         textViewMrz.setVisibility(View.VISIBLE);
     }
+
+   /* public MRZInfo TakeName(String textMRZ){
+
+            MRZInfo mrzInfoz = new MRZInfo(textMRZ);
+            return mrzInfoz;
+    }*/
 }

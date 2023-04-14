@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.os.AsyncTask;
@@ -50,9 +49,9 @@ public class CameraActivity extends AppCompatActivity {
 
     private Intent intent;
 
-    private  String documentNumber="";
-    private  String dateOfBirth="";
-    private  String getDateOfExpiry="";
+   /* private  String documentNumber = "";
+    private  String dateOfBirth = "";
+    private  String getDateOfExpiry = "";*/
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -61,10 +60,8 @@ public class CameraActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_camera);
 
-        camera = findViewById(R.id.camera2);
+        camera = findViewById(R.id.camera);
         camera.setLifecycleOwner(this); // Yaşam Döngüsü Sahibini Ayarla
-
-
 
         camera.addCameraListener(new CameraListener() {
             @Override
@@ -203,45 +200,50 @@ public class CameraActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Text>() {
                             @Override
                             public void onSuccess(Text visionText) {
-                                // Task completed successfully
-                                // ...
-                                //textView.setText((CharSequence) visionText);
-                                for(Text.TextBlock block : visionText.getTextBlocks()){
+
+                                //textView.setText((CharSequence) visionText); // Buradaki karaktere ayırmayla şart oluşturabilirim
+                               /* for(Text.TextBlock block : visionText.getTextBlocks()){
                                     String blockText = block.getText();
                                     Point[] blockCornerPoints = block.getCornerPoints();
                                     Rect blockFrame = block.getBoundingBox();
-                                   /* Log.e("symbol",blockText);
-                                    Log.e("symbolFrame", String.valueOf(blockFrame));
-                                    Log.d("-","---------");*/
-                                }
+
+                                }*/
                                 String value = visionText.getText().replace(" ","");
-                                String result = value.replace("«","<");
+                                String resultMrz = value.replace("«","<");
+
+                                Log.e("visionText", resultMrz); // Bütün taramayı veriyor...
+                                Log.e("UZUNLUK", String.valueOf(resultMrz.length()));
 
                                 Boolean toGO = false;
 
-                                if (result.length() == 92) {
+                                if (resultMrz.length() == 92) {
 
-                                    Log.e("visionText", result); // Bütün taramayı veriyor...
-                                    Log.e("UZUNLUK", String.valueOf(result.length()));
+                                    Log.e("visionText", resultMrz); // Bütün taramayı veriyor...
+                                    Log.e("UZUNLUK", String.valueOf(resultMrz.length()));
 
-                                    // if şartı gelcek
-                                    camera.removeFrameProcessor(frameProcessor);
+                                    camera.removeFrameProcessor(frameProcessor); // Camerayı sonlandırması lazım.
+
                                     // JMRTD MRZ OKUMA
-                                    MRZInfo mrzInfom = ReadMerz(result);
+                                    ReadMerz();
 
                                     toGO = true;
 
-                                  if (toGO){
-                                      Log.e("Togo","İF e girildi");
-                                      intent = new Intent(CameraActivity.this,NfcActivity.class);
+                                    try {
 
-                                      intent.putExtra("getDateOfExpiry",mrzInfom.getDateOfExpiry());
-                                      intent.putExtra("dateOfBirth",mrzInfom.getDateOfBirth());
-                                      intent.putExtra("documentNumber",mrzInfom.getDocumentNumber());
+                                        if ( toGO){
+                                            Log.e("Togo","İF e girildi");
+                                            intent = new Intent(CameraActivity.this,NfcActivity.class);
 
+                                            intent.putExtra("getDateOfExpiry","A4OU47500");
+                                            intent.putExtra("dateOfBirth","970103");
+                                            intent.putExtra("documentNumber","330127");
 
-                                      startActivity(intent);
-                                  }
+                                            startActivity(intent);
+                                        }
+
+                                    }catch (Exception e){
+                                        Log.e("Sayfa geçişi Hata", String.valueOf(e));
+                                    }
 
                                 }
                             }
@@ -254,30 +256,41 @@ public class CameraActivity extends AppCompatActivity {
                                         // ...
                                     }
                                 });
-
-
         return null;
     }
 
     //MRZ INFO
-    public  MRZInfo ReadMerz(String textMRZ){
-        MRZInfo mrzInfoz = new MRZInfo(textMRZ);
-        return mrzInfoz;
-       // documentNumber= mrzInfo.getDocumentNumber();
-       // dateOfBirth = mrzInfo.getDateOfBirth();
-       // getDateOfExpiry = mrzInfo.getDateOfExpiry();
+    public  void ReadMerz(){
 
+        String mrz = "I<TURA40U475006<23741396140<<<9701034M330127TUR<<<<<<<<<<<0USTUNTEPE<<SELAHATTIN<TUNAHAN<";
+        String mrzString = "I<TURA40U475006<23741396140<<<\n9701034M3301270TUR<<<<<<<<<<<0\nUSTUNTEPE<<SELAHATTIN<TUNAHAN<";
+        MRZInfo mrzInfoz = new MRZInfo(mrzString);
+        
+        String issuingState = mrzInfoz.getIssuingState();
+        String primaryIdentifier =  mrzInfoz.getPrimaryIdentifier();
+        String secondaryIdentifier = mrzInfoz.getSecondaryIdentifier();
+        String documentNumber2 = mrzInfoz.getDocumentNumber();
+        String nationality = mrzInfoz.getNationality();
+        String dateOfBirth2 = mrzInfoz.getDateOfBirth();
+        String personalNumber = mrzInfoz.getPersonalNumber();
+        String getOptionalData1 = mrzInfoz.getOptionalData1();
+        String Gender = String.valueOf(mrzInfoz.getGender());
+        String getDateOfExpiry2 = mrzInfoz.getDateOfExpiry();
 
-       // Log.e("issuingState ( Ulke )",issuingState);
-        //Log.e("primaryIdentifier(soyad",primaryIdentifier);
-        //Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
-       // Log.e("documentNumbe(Seri no)",documentNumber2);
-//        Log.e("dateOfBirth",dateOfBirth2);
-       // Log.e("personalNumber(TC)",personalNumber.replace("<",""));
-        //Log.e("getOptionalData1",getOptionalData1);
-       // Log.e("Gender -Cinsiyet",Gender);
-      //  Log.e(" Son kullanma tarihi",getDateOfExpiry2);
-        //Log.w("test","dedaw");
+     /*  documentNumber= mrzInfoz.getDocumentNumber();
+       dateOfBirth = mrzInfoz.getDateOfBirth();
+       getDateOfExpiry = mrzInfoz.getDateOfExpiry();*/
+
+       Log.e("issuingState ( Ulke )",issuingState);
+        Log.e("primaryIdentifier(soyad",primaryIdentifier);
+        Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
+        Log.e("documentNumbe(Seri no)",documentNumber2);
+        Log.e("dateOfBirth",dateOfBirth2);
+       Log.e("personalNumber(TC)",personalNumber.replace("<",""));
+        Log.e("getOptionalData1",getOptionalData1);
+       Log.e("Gender -Cinsiyet",Gender);
+      Log.e(" Son kullanma tarihi",getDateOfExpiry2);
+      Log.w("test","dedaw");
 
 
     }

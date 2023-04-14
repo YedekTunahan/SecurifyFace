@@ -38,9 +38,9 @@ public class FirstPageFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(FirstPageFragment.this.getActivity(),CameraActivity.class);
-                startActivity(intent);
-               // Navigation.findNavController(v).navigate(R.id.toCamera);
+                Intent intent2 = new Intent(FirstPageFragment.this.getActivity(),CameraActivity.class);
+                startActivity(intent2);
+
             }
         });
 
