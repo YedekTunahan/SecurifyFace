@@ -67,7 +67,7 @@ public class NfcActivity extends AppCompatActivity {
         setContentView(R.layout.activity_nfc);
 
         documentNumber=  getIntent().getStringExtra("documentNumber"); //"A4OU47500"
-        dateOfBirth=  getIntent().getStringExtra("dateOfBirth"); //"970103";
+        dateOfBirth =  getIntent().getStringExtra("dateOfBirth"); //"970103";
         getDateOfExpiry = getIntent().getStringExtra("getDateOfExpiry"); //"330127";
 
 
@@ -119,7 +119,7 @@ public class NfcActivity extends AppCompatActivity {
             Log.e("TAG", String.valueOf(tag));
             if (Arrays.asList(tag.getTechList()).contains("android.nfc.tech.IsoDep")) {
 
-                BACKeySpec bacKey = new BACKey("A40U47500","970103","330127");
+                BACKeySpec bacKey = new BACKey(documentNumber,dateOfBirth,getDateOfExpiry);
 
                 Log.e("Backey", String.valueOf(bacKey));
                 new ReadTask(nfc, bacKey).execute();
@@ -205,6 +205,7 @@ public class NfcActivity extends AppCompatActivity {
                 lds.add(PassportService.EF_DG1, dg1In, dg1In.getLength());
                 dg1File = lds.getDG1File();
 
+                Log.e("imza", String.valueOf(dg1File.getEncoded()));
                 Log.e("dg1File", String.valueOf(dg1File));
 
                 ///////////// DG11FİLE
@@ -213,19 +214,28 @@ public class NfcActivity extends AppCompatActivity {
                 dg11File = lds.getDG11File();
 
 
-                ///////////// DG2FİLE
+               ///////////// DG2FİLE
                 CardFileInputStream dg2In = service.getInputStream(PassportService.EF_DG2);
                 lds.add(PassportService.EF_DG2, dg2In, dg2In.getLength());
                 dg2File = lds.getDG2File();
                 Log.e("dg2File", String.valueOf(dg2File));
+
+
                 ///////////// DG15FİLE
 
                 Log.e("dg15FileSTART", String.valueOf(dg15File));
                 CardFileInputStream dg15In = service.getInputStream(PassportService.EF_DG15);
                 lds.add(PassportService.EF_DG15, dg15In, dg15In.getLength());
                 dg15File = lds.getDG15File();
-                Log.e("dg15File", String.valueOf(dg15File));
                 Log.e("dg15FileGETCLASS", String.valueOf(dg15File.getPublicKey()));
+
+               //IMZA
+
+                // Elektronik imza bilgilerini al
+               /* CardVerifiableCertificate cvCert = service.get;
+                List<CardVerifiableCertificate> certChain = service.getCertificateChain();
+                List<CVCertificateDescription> cvCertificateDescription = service.getCVCertificateDescriptionList();
+                Signature signature = service.getSignature();*/
                 ///////////// DG7FİLE
 
               /*  CardFileInputStream dg7In = service.getInputStream(PassportService.EF_DG7);
@@ -248,9 +258,10 @@ public class NfcActivity extends AppCompatActivity {
 
                 MRZInfo mrzInfo = dg1File.getMRZInfo();
 
+
                 Log.e("Alınan MRZ",mrzInfo.getPrimaryIdentifier());
                 Log.e("DG11","////////////");
-                Log.e("Adress", String.valueOf(dg11File.getPermanentAddress()));
+               /* Log.e("Adress", String.valueOf(dg11File.getPermanentAddress()));
                 Log.e("Other Name", String.valueOf(dg11File.getOtherNames()));
                 Log.e("Personal Number",dg11File.getPersonalNumber());
                 Log.e("Place of Birth", String.valueOf(dg11File.getPlaceOfBirth()));
@@ -261,7 +272,7 @@ public class NfcActivity extends AppCompatActivity {
                 //Log.e("Personal Summary",dg11File.getPersonalSummary()); //değerlere ulaşılmıyor
                 Log.e("Proof of Citizenship ", String.valueOf(dg11File.getProofOfCitizenship()));
                 Log.e("Number of OtherValid ", String.valueOf(dg11File.getOtherValidTDNumbers()));
-                Log.e("TAG", String.valueOf(dg11File.getTag()));
+                Log.e("TAG", String.valueOf(dg11File.getTag()));*/
                 // Log.e("Custody Information",dg11File.getCustodyInformation()); // değerlere ulaşılmıyor
 
                 /// IMAGE  documentNumber,dateOfBirth,getDateOfExpiry
@@ -274,6 +285,7 @@ public class NfcActivity extends AppCompatActivity {
                 String textMrz = String.valueOf(dg1File).replace("DG1File","");
                 textViewMrz.setText(textMrz);
                 enable();
+
                // textViewName.setText("Tunahan");
                 /*MRZInfo name = TakeName(textMrz);
                 textViewName.setText(name.getPrimaryIdentifier());
@@ -342,7 +354,6 @@ public class NfcActivity extends AppCompatActivity {
         textViewMrzTitle.setVisibility(View.GONE);
         textViewMrz.setVisibility(View.GONE);
 
-
     }
 
     public void enable(){
@@ -357,6 +368,7 @@ public class NfcActivity extends AppCompatActivity {
         textViewDocumentNo.setVisibility(View.VISIBLE);
         textViewMrzTitle.setVisibility(View.VISIBLE);
         textViewMrz.setVisibility(View.VISIBLE);
+
     }
 
    /* public MRZInfo TakeName(String textMRZ){

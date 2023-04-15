@@ -173,7 +173,7 @@ public class CameraActivity extends AppCompatActivity {
             if (bitmap != null) {
 
                 // ML KİT - MRZ READ
-                processImage(bitmap);
+                processImage(bitmap) ;
             }
             return null;
         }
@@ -192,7 +192,7 @@ public class CameraActivity extends AppCompatActivity {
 
 
     //ML KİT İmage işleme
-    private Void processImage(Bitmap bitmap) {
+    private boolean processImage(Bitmap bitmap) {
 
         InputImage image = InputImage.fromBitmap(bitmap, 0);
         Task<Text> result =
@@ -216,15 +216,34 @@ public class CameraActivity extends AppCompatActivity {
 
                                 Boolean toGO = false;
 
-                                if (resultMrz.length() == 92) {
+                                try
+                                {
+                                    ReadMerz(resultMrz);
+                                    Log.e("Togo","İF e girildi");
 
+                                    intent = new Intent(CameraActivity.this,NfcActivity.class);
+
+                                    intent.putExtra("getDateOfExpiry",ReadMerz(resultMrz).getDateOfExpiry());
+                                    intent.putExtra("dateOfBirth",ReadMerz(resultMrz).getDateOfBirth());
+                                    intent.putExtra("documentNumber",ReadMerz(resultMrz).getDocumentNumber());
+
+                                    startActivity(intent);
+
+
+                                }catch (Exception e)
+                                {
+                                    Log.e("burada hata oluştu","burada hataaaa");
+                                    return;
+                                }
+
+
+                                /*
                                     Log.e("visionText", resultMrz); // Bütün taramayı veriyor...
                                     Log.e("UZUNLUK", String.valueOf(resultMrz.length()));
 
                                     camera.removeFrameProcessor(frameProcessor); // Camerayı sonlandırması lazım.
 
                                     // JMRTD MRZ OKUMA
-                                    ReadMerz();
 
                                     toGO = true;
 
@@ -244,9 +263,10 @@ public class CameraActivity extends AppCompatActivity {
                                     }catch (Exception e){
                                         Log.e("Sayfa geçişi Hata", String.valueOf(e));
                                     }
-
+                                    */
                                 }
-                            }
+
+
                         })
                         .addOnFailureListener(
                                 new OnFailureListener() {
@@ -256,43 +276,41 @@ public class CameraActivity extends AppCompatActivity {
                                         // ...
                                     }
                                 });
-        return null;
+        return Boolean.parseBoolean(null);
     }
 
     //MRZ INFO
-    public  void ReadMerz(){
+    public   MRZInfo ReadMerz(String text){
+            String mrz = "I<TURA40U475006<23741396140<<<9701034M330127TUR<<<<<<<<<<<0USTUNTEPE<<SELAHATTIN<TUNAHAN<";
+            String mrzString = "I<TURA40U475006<23741396140<<<\n9701034M3301270TUR<<<<<<<<<<<0\nUSTUNTEPE<<SELAHATTIN<TUNAHANX";
+            MRZInfo mrzInfoz = new MRZInfo(text);
 
-        String mrz = "I<TURA40U475006<23741396140<<<9701034M330127TUR<<<<<<<<<<<0USTUNTEPE<<SELAHATTIN<TUNAHAN<";
-        String mrzString = "I<TURA40U475006<23741396140<<<\n9701034M3301270TUR<<<<<<<<<<<0\nUSTUNTEPE<<SELAHATTIN<TUNAHAN<";
-        MRZInfo mrzInfoz = new MRZInfo(mrzString);
-        
-        String issuingState = mrzInfoz.getIssuingState();
-        String primaryIdentifier =  mrzInfoz.getPrimaryIdentifier();
-        String secondaryIdentifier = mrzInfoz.getSecondaryIdentifier();
-        String documentNumber2 = mrzInfoz.getDocumentNumber();
-        String nationality = mrzInfoz.getNationality();
-        String dateOfBirth2 = mrzInfoz.getDateOfBirth();
-        String personalNumber = mrzInfoz.getPersonalNumber();
-        String getOptionalData1 = mrzInfoz.getOptionalData1();
-        String Gender = String.valueOf(mrzInfoz.getGender());
-        String getDateOfExpiry2 = mrzInfoz.getDateOfExpiry();
+            String issuingState = mrzInfoz.getIssuingState();
+            String primaryIdentifier =  mrzInfoz.getPrimaryIdentifier();
+            String secondaryIdentifier = mrzInfoz.getSecondaryIdentifier();
+            String documentNumber2 = mrzInfoz.getDocumentNumber();
+            String nationality = mrzInfoz.getNationality();
+            String dateOfBirth2 = mrzInfoz.getDateOfBirth();
+            String personalNumber = mrzInfoz.getPersonalNumber();
+            String getOptionalData1 = mrzInfoz.getOptionalData1();
+            String Gender = String.valueOf(mrzInfoz.getGender());
+            String getDateOfExpiry2 = mrzInfoz.getDateOfExpiry();
 
-     /*  documentNumber= mrzInfoz.getDocumentNumber();
-       dateOfBirth = mrzInfoz.getDateOfBirth();
-       getDateOfExpiry = mrzInfoz.getDateOfExpiry();*/
+         /*  documentNumber= mrzInfoz.getDocumentNumber();
+           dateOfBirth = mrzInfoz.getDateOfBirth();
+           getDateOfExpiry = mrzInfoz.getDateOfExpiry();*/
 
-       Log.e("issuingState ( Ulke )",issuingState);
-        Log.e("primaryIdentifier(soyad",primaryIdentifier);
-        Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
-        Log.e("documentNumbe(Seri no)",documentNumber2);
-        Log.e("dateOfBirth",dateOfBirth2);
-       Log.e("personalNumber(TC)",personalNumber.replace("<",""));
-        Log.e("getOptionalData1",getOptionalData1);
-       Log.e("Gender -Cinsiyet",Gender);
-      Log.e(" Son kullanma tarihi",getDateOfExpiry2);
-      Log.w("test","dedaw");
-
-
+            Log.e("issuingState ( Ulke )",issuingState);
+            Log.e("primaryIdentifier(soyad",primaryIdentifier);
+            Log.e("secondaryIdentifier(ad)",secondaryIdentifier);
+            Log.e("documentNumbe(Seri no)",documentNumber2);
+            Log.e("dateOfBirth",dateOfBirth2);
+            Log.e("personalNumber(TC)",personalNumber.replace("<",""));
+            Log.e("getOptionalData1",getOptionalData1);
+            Log.e("Gender -Cinsiyet",Gender);
+            Log.e(" Son kullanma tarihi",getDateOfExpiry2);
+            Log.w("test","dedaw");
+            return mrzInfoz;
     }
 
 
