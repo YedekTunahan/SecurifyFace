@@ -52,6 +52,9 @@ public class NfcActivity extends AppCompatActivity {
     String documentNumber;
     String dateOfBirth;
     String getDateOfExpiry;
+
+    String name;
+    String surname;
     ImageView imageViewPhoto;
 
     TextView textViewNfcRead,textViewnameTitle,textViewSurnameTitle,textViewName,textViewSurname,
@@ -69,6 +72,8 @@ public class NfcActivity extends AppCompatActivity {
         documentNumber=  getIntent().getStringExtra("documentNumber"); //"A4OU47500"
         dateOfBirth =  getIntent().getStringExtra("dateOfBirth"); //"970103";
         getDateOfExpiry = getIntent().getStringExtra("getDateOfExpiry"); //"330127";
+        name = getIntent().getStringExtra("name");
+        surname=getIntent().getStringExtra("surname");
 
 
 
@@ -284,6 +289,8 @@ public class NfcActivity extends AppCompatActivity {
                 textViewDocumentNo.setText(documentNumber);
                 String textMrz = String.valueOf(dg1File).replace("DG1File","");
                 textViewMrz.setText(textMrz);
+                textViewName.setText(name);
+                textViewSurname.setText(surname);
                 enable();
 
                // textViewName.setText("Tunahan");

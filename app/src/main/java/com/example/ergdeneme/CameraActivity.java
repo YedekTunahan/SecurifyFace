@@ -167,20 +167,28 @@ public class CameraActivity extends AppCompatActivity {
     /// okuma işlemi ,,,
     private class ProcessOCR extends AsyncTask {
         Bitmap bitmap = null;
+        boolean restart = false;
 
         @Override
         protected Object doInBackground(Object[] objects) {
             if (bitmap != null) {
 
                 // ML KİT - MRZ READ
-                processImage(bitmap) ;
+                restart = processImage(bitmap);
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(Object o) {  // yürütme sonrası ()
-            processing.set(false);  // işleme
+            if(restart == true)
+            {
+                processing.set(true);  // işleme
+            }
+            else
+            {
+                processing.set(false);
+            }
 
             // Sayfa geçiş işlemi
         }
@@ -193,7 +201,7 @@ public class CameraActivity extends AppCompatActivity {
 
     //ML KİT İmage işleme
     private boolean processImage(Bitmap bitmap) {
-
+        final boolean[] tempRestart = {false};
         InputImage image = InputImage.fromBitmap(bitmap, 0);
         Task<Text> result =
                 recognizer.process(image)
@@ -206,67 +214,39 @@ public class CameraActivity extends AppCompatActivity {
                                     String blockText = block.getText();
                                     Point[] blockCornerPoints = block.getCornerPoints();
                                     Rect blockFrame = block.getBoundingBox();
-
                                 }*/
-                                String value = visionText.getText().replace(" ","");
-                                String resultMrz = value.replace("«","<");
-
-                                Log.e("visionText", resultMrz); // Bütün taramayı veriyor...
-                                Log.e("UZUNLUK", String.valueOf(resultMrz.length()));
-
-                                Boolean toGO = false;
-
                                 try
                                 {
-                                    ReadMerz(resultMrz);
-                                    Log.e("Togo","İF e girildi");
+                                    String value = visionText.getText().replace(" ","");
+                                    String resultMrz = value.replace("«","<");
+                                    if(resultMrz.length() == 92) //Uzunlugu saydım 90 gözüküyordu. Bu if kaldırılabilir zorunlu değil.
+                                    {
+                                        Log.e("Dogru UZUNLUK ", String.valueOf(visionText.getText().length()));
 
-                                    intent = new Intent(CameraActivity.this,NfcActivity.class);
+                                        ReadMerz(resultMrz);
 
-                                    intent.putExtra("getDateOfExpiry",ReadMerz(resultMrz).getDateOfExpiry());
-                                    intent.putExtra("dateOfBirth",ReadMerz(resultMrz).getDateOfBirth());
-                                    intent.putExtra("documentNumber",ReadMerz(resultMrz).getDocumentNumber());
+                                        tempRestart[0] = false;
+                                        camera.removeFrameProcessor(frameProcessor); // Camerayı sonlandırması lazım.
 
-                                    startActivity(intent);
-
-
-                                }catch (Exception e)
-                                {
-                                    Log.e("burada hata oluştu","burada hataaaa");
-                                    return;
-                                }
-
-
-                                /*
-                                    Log.e("visionText", resultMrz); // Bütün taramayı veriyor...
-                                    Log.e("UZUNLUK", String.valueOf(resultMrz.length()));
-
-                                    camera.removeFrameProcessor(frameProcessor); // Camerayı sonlandırması lazım.
-
-                                    // JMRTD MRZ OKUMA
-
-                                    toGO = true;
-
-                                    try {
-
-                                        if ( toGO){
-                                            Log.e("Togo","İF e girildi");
-                                            intent = new Intent(CameraActivity.this,NfcActivity.class);
-
-                                            intent.putExtra("getDateOfExpiry","A4OU47500");
-                                            intent.putExtra("dateOfBirth","970103");
-                                            intent.putExtra("documentNumber","330127");
-
-                                            startActivity(intent);
-                                        }
-
-                                    }catch (Exception e){
-                                        Log.e("Sayfa geçişi Hata", String.valueOf(e));
+                                        intent = new Intent(CameraActivity.this,NfcActivity.class);
+                                        intent.putExtra("getDateOfExpiry",ReadMerz(resultMrz).getDateOfExpiry());
+                                        intent.putExtra("dateOfBirth",ReadMerz(resultMrz).getDateOfBirth());
+                                        intent.putExtra("documentNumber",ReadMerz(resultMrz).getDocumentNumber());
+                                        intent.putExtra("name",ReadMerz(resultMrz).getSecondaryIdentifier().replace("<"," "));
+                                        intent.putExtra("surname",ReadMerz(resultMrz).getPrimaryIdentifier());
+                                        startActivity(intent);
                                     }
-                                    */
+                                    else
+                                    {
+                                        Log.e("HATALI UZUNLUK ", String.valueOf(resultMrz.length()));
+                                        tempRestart[0] = true;
+                                    }
                                 }
+                                catch(Exception e)
+                                {
 
-
+                                }
+                            }
                         })
                         .addOnFailureListener(
                                 new OnFailureListener() {
@@ -276,13 +256,15 @@ public class CameraActivity extends AppCompatActivity {
                                         // ...
                                     }
                                 });
-        return Boolean.parseBoolean(null);
+        return tempRestart[0];
     }
 
     //MRZ INFO
-    public   MRZInfo ReadMerz(String text){
+    public  MRZInfo ReadMerz(String text){
+        try
+        {
             String mrz = "I<TURA40U475006<23741396140<<<9701034M330127TUR<<<<<<<<<<<0USTUNTEPE<<SELAHATTIN<TUNAHAN<";
-            String mrzString = "I<TURA40U475006<23741396140<<<\n9701034M3301270TUR<<<<<<<<<<<0\nUSTUNTEPE<<SELAHATTIN<TUNAHANX";
+            String mrzString = "I<TURA40U475006<23741396140<<<\n9701034M3301270TUR<<<<<<<<<<<0\nUSTUNTEPE<<SELAHATTIN<TUNAHAN<";
             MRZInfo mrzInfoz = new MRZInfo(text);
 
             String issuingState = mrzInfoz.getIssuingState();
@@ -296,9 +278,9 @@ public class CameraActivity extends AppCompatActivity {
             String Gender = String.valueOf(mrzInfoz.getGender());
             String getDateOfExpiry2 = mrzInfoz.getDateOfExpiry();
 
-         /*  documentNumber= mrzInfoz.getDocumentNumber();
-           dateOfBirth = mrzInfoz.getDateOfBirth();
-           getDateOfExpiry = mrzInfoz.getDateOfExpiry();*/
+		 /*  documentNumber= mrzInfoz.getDocumentNumber();
+		   dateOfBirth = mrzInfoz.getDateOfBirth();
+		   getDateOfExpiry = mrzInfoz.getDateOfExpiry();*/
 
             Log.e("issuingState ( Ulke )",issuingState);
             Log.e("primaryIdentifier(soyad",primaryIdentifier);
@@ -311,6 +293,12 @@ public class CameraActivity extends AppCompatActivity {
             Log.e(" Son kullanma tarihi",getDateOfExpiry2);
             Log.w("test","dedaw");
             return mrzInfoz;
+        }
+        catch(Exception e)
+        {
+            Log.e("MRZ INFOZ hatası ","MRZ INFOZ hatası ");
+        }
+    return null;
     }
 
 
